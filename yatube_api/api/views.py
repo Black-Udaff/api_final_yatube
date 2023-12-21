@@ -9,11 +9,12 @@ from .serializers import (
     CommentSerializer,
     FollowSerializer,
 )
+from .permissions import IsAuthorPermission
 
 
 class FolowViewSet(viewsets.ModelViewSet):
     serializer_class = FollowSerializer
-
+    queryset = Follow.objects.all()
     def get_queryset(self):
         user = self.request.user
         return user.follower.all()
