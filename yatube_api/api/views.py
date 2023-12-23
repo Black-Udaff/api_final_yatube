@@ -1,7 +1,10 @@
-# TODO:  Напишите свой вариант
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets
 from rest_framework.exceptions import ValidationError
+from rest_framework.pagination import LimitOffsetPagination
+from rest_framework.permissions import IsAuthenticated
+from rest_framework import filters
+
 from posts.models import Post, Group, Follow
 from .serializers import (
     PostSerializer,
@@ -15,6 +18,13 @@ from .permissions import IsAuthorPermission
 class FolowViewSet(viewsets.ModelViewSet):
     serializer_class = FollowSerializer
     queryset = Follow.objects.all()
+    permission_classes = [
+        IsAuthenticated,
+    ]
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('following__username',)
+
+    
     def get_queryset(self):
         user = self.request.user
         return user.follower.all()
@@ -30,6 +40,8 @@ class PostViewSet(viewsets.ModelViewSet):
     permission_classes = [
         IsAuthorPermission,
     ]
+    pagination_class = LimitOffsetPagination
+
 
     def perform_create(self, serializer):
         user = self.request.user
