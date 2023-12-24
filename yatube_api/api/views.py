@@ -24,7 +24,6 @@ class FolowViewSet(viewsets.ModelViewSet):
     filter_backends = (filters.SearchFilter,)
     search_fields = ('following__username',)
 
-    
     def get_queryset(self):
         user = self.request.user
         return user.follower.all()
@@ -34,6 +33,7 @@ class FolowViewSet(viewsets.ModelViewSet):
             raise ValidationError('Нельзя подписаться на самого себя.')
         serializer.save(user=self.request.user)
 
+
 class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
@@ -41,7 +41,6 @@ class PostViewSet(viewsets.ModelViewSet):
         IsAuthorPermission,
     ]
     pagination_class = LimitOffsetPagination
-
 
     def perform_create(self, serializer):
         user = self.request.user
